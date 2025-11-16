@@ -10,7 +10,7 @@ import { SocialRecipes } from './components/SocialRecipes';
 import { PriceHistory } from './components/PriceHistory';
 import { Notifications } from './components/Notifications';
 import { Profile } from './components/Profile';
-import { Home as HomeIcon, ShoppingCart, Utensils, Bell, User } from 'lucide-react';
+import { Home as HomeIcon, ShoppingCart, Utensils, User } from 'lucide-react';
 
 type AppState = 'splash' | 'onboarding' | 'app';
 type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile';
