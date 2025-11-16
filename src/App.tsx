@@ -20,17 +20,13 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
 
   const handleSplashFinish = () => {
-    // Wait for the fade transition to complete before unmounting
-    setTimeout(() => {
-      setAppState('onboarding');
-    }, 600);
+    setTimeout(() => setAppState('onboarding'), 600);
   };
 
   const handleGetStarted = () => {
     setAppState('app');
   };
 
-  // Show splash and onboarding (both mounted, transition handled internally)
   if (appState === 'splash') {
     return (
       <>
@@ -40,12 +36,9 @@ export default function App() {
     );
   }
 
-  // Show onboarding only
   if (appState === 'onboarding') {
     return <Onboarding onGetStarted={handleGetStarted} />;
   }
-
-  // Main app
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -73,8 +66,6 @@ export default function App() {
   return (
     <MobileLayout className="bg-white pb-20">
       {renderScreen()}
-      
-      {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 px-4 py-3">
         <div className="flex justify-around items-center">
           <button 

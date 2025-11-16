@@ -8,11 +8,9 @@ interface MobileLayoutProps {
 export function MobileLayout({ children, className = '' }: MobileLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      {/* Mobile container - exact same dimensions for all screens */}
       <div className={`mx-auto max-w-md min-h-screen w-full relative shadow-xl ${className}`}>
         {children}
       </div>
     </div>
   );
 }
-

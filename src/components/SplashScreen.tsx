@@ -42,4 +42,3 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
     </div>
   );
 }
-

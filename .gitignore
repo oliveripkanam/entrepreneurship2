@@ -38,14 +38,10 @@ lerna-debug.log*
 # Vite
 *.local
 
-# Editor directories and files
-.vscode/*
+# Editor
 !.vscode/extensions.json
-.idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
