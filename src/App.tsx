@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SplashScreen } from './components/SplashScreen';
-import { Onboarding } from './components/Onboarding';
+import { StartScreen } from './components/StartScreen';
 import { MobileLayout } from './components/MobileLayout';
 import { Home } from './components/Home';
 import { BasketComparison } from './components/BasketComparison';
@@ -30,14 +30,14 @@ export default function App() {
   if (appState === 'splash') {
     return (
       <>
-        <Onboarding onGetStarted={handleGetStarted} />
+        <StartScreen onGetStarted={handleGetStarted} />
         <SplashScreen onFinish={handleSplashFinish} />
       </>
     );
   }
 
   if (appState === 'onboarding') {
-    return <Onboarding onGetStarted={handleGetStarted} />;
+    return <StartScreen onGetStarted={handleGetStarted} />;
   }
 
   const renderScreen = () => {

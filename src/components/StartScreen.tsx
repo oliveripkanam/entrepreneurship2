@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-interface OnboardingProps {
+interface StartScreenProps {
   onGetStarted: () => void;
 }
 
-export function Onboarding({ onGetStarted }: OnboardingProps) {
+export function StartScreen({ onGetStarted }: StartScreenProps) {
   const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
@@ -69,3 +69,4 @@ export function Onboarding({ onGetStarted }: OnboardingProps) {
     </div>
   );
 }
+
