@@ -17,44 +17,30 @@ type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-histo
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>('splash');
-  const [showSplash, setShowSplash] = useState(true);
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
 
   const handleSplashFinish = () => {
-    // Show onboarding before hiding splash
-    setShowOnboarding(true);
-    // Hide splash after a brief moment
+    // Wait for the fade transition to complete before unmounting
     setTimeout(() => {
-      setShowSplash(false);
       setAppState('onboarding');
-    }, 100);
+    }, 600);
   };
 
   const handleGetStarted = () => {
     setAppState('app');
-    setShowOnboarding(false);
   };
 
-  // Show splash screen with onboarding
+  // Show splash and onboarding (both mounted, transition handled internally)
   if (appState === 'splash') {
     return (
-      <div className="relative w-full min-h-screen">
-        {showOnboarding && (
-          <div className="fixed inset-0 w-full h-full z-0">
-            <Onboarding onGetStarted={handleGetStarted} />
-          </div>
-        )}
-        {showSplash && (
-          <div className="fixed inset-0 w-full h-full z-10">
-            <SplashScreen onFinish={handleSplashFinish} />
-          </div>
-        )}
-      </div>
+      <>
+        <Onboarding onGetStarted={handleGetStarted} />
+        <SplashScreen onFinish={handleSplashFinish} />
+      </>
     );
   }
 
-  // Show onboarding
+  // Show onboarding only
   if (appState === 'onboarding') {
     return <Onboarding onGetStarted={handleGetStarted} />;
   }

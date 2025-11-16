@@ -9,15 +9,13 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    // Start fade out after 700ms
     const fadeTimer = setTimeout(() => {
       setFadeOut(true);
     }, 700);
 
-    // Finish and transition after fade completes (300ms fade duration)
     const finishTimer = setTimeout(() => {
       onFinish();
-    }, 1000); // 1 second total (700ms visible + 300ms fade)
+    }, 1000);
 
     return () => {
       clearTimeout(fadeTimer);
@@ -27,9 +25,12 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
 
   return (
     <div 
-      className={`transition-opacity duration-300 ease-in-out ${
-        fadeOut ? 'opacity-0' : 'opacity-100'
-      }`}
+      className="fixed inset-0 w-full h-full z-50"
+      style={{ 
+        opacity: fadeOut ? 0 : 1,
+        transition: 'opacity 500ms ease-in-out',
+        pointerEvents: fadeOut ? 'none' : 'auto'
+      }}
     >
       <MobileLayout className="bg-[#4CAF50] flex items-center justify-center">
         <img 

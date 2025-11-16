@@ -9,19 +9,22 @@ export function Onboarding({ onGetStarted }: OnboardingProps) {
   const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
-    // Start fade in after a tiny delay to ensure smooth transition
     const timer = setTimeout(() => {
       setFadeIn(true);
-    }, 100);
+    }, 800);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
     <div 
-      className={`transition-opacity duration-500 ease-in-out ${
-        fadeIn ? 'opacity-100' : 'opacity-0'
-      }`}
+      className={`fixed inset-0 w-full h-full z-40`}
+      style={{ 
+        opacity: fadeIn ? 1 : 0,
+        transition: 'opacity 700ms ease-in-out'
+      }}
     >
       <MobileLayout className="bg-white">
         {/* Background Image - Blurred grocery delivery person */}
