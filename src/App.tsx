@@ -64,9 +64,11 @@ export default function App() {
   };
 
   return (
-    <MobileLayout className="bg-white pb-20">
-      {renderScreen()}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 px-4 py-3">
+    <MobileLayout className="bg-white relative overflow-hidden h-full">
+      <div className="h-full overflow-y-auto pb-20 scrollbar-hide">
+        {renderScreen()}
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 w-full bg-white border-t border-gray-200 px-4 py-3 z-10">
         <div className="flex justify-around items-center">
           <button 
             onClick={() => setCurrentScreen('home')}
