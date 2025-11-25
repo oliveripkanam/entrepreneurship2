@@ -1,9 +1,39 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // Increase limit to 5MB
+      },
+      manifest: {
+        name: 'UK Grocery Saver App',
+        short_name: 'Grocery Saver',
+        description: 'Save money on your grocery shopping',
+        theme_color: '#4CAF50',
+        background_color: '#ffffff',
+        display: 'standalone',
+        icons: [
+          {
+            src: '/images/Icon.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/images/Icon.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
+      }
+    })
+  ],
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {
