@@ -7,8 +7,8 @@ interface MobileLayoutProps {
 
 export function MobileLayout({ children, className = '' }: MobileLayoutProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className={`mx-auto max-w-md w-full relative shadow-xl ${className}`} style={{ aspectRatio: '1675/3584' }}>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className={`mx-auto max-w-md w-full h-full relative shadow-xl overflow-hidden rounded-3xl ${className}`} style={{ aspectRatio: '9/19.5', maxHeight: '90vh' }}>
         {children}
       </div>
     </div>
