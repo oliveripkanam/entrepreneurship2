@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { ChevronLeft, Bell } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { PRICES_LAST_UPDATED } from '../lib/priceData';
+import { ChevronLeft, TrendingDown, TrendingUp, Search } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { PRICE_LAST_UPDATED } from '../utils/priceData';
 
-type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications';
+type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'map';
 
 interface PriceHistoryProps {
   onNavigate: (screen: Screen) => void;
@@ -52,11 +52,11 @@ export function PriceHistory({ onNavigate }: PriceHistoryProps) {
       <div className="p-6">
         {/* Product Info */}
         <div className="mb-6">
-          <h2 className="text-gray-800 mb-2">Organic Whole Milk (2L) Price Trend</h2>
-          <div className="flex items-center justify-between">
-            <p className="text-gray-600">(Last 12 Months)</p>
-            <span className="text-gray-400 text-xs">Updated: {PRICES_LAST_UPDATED}</span>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-gray-800">Organic Whole Milk (2L) Price Trend</h2>
+            <span className="text-gray-400 text-xs">Updated: {PRICE_LAST_UPDATED}</span>
           </div>
+          <p className="text-gray-600">(Last 12 Months)</p>
         </div>
 
         {/* Timeframe Toggle */}

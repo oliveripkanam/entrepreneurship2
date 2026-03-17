@@ -1,7 +1,4 @@
-import { useState } from 'react';
-import { SplashScreen } from './components/SplashScreen';
-import { StartScreen } from './components/StartScreen';
-import { MobileLayout } from './components/MobileLayout';
+import { useState, useEffect } from 'react';
 import { Home } from './components/Home';
 import { BasketComparison } from './components/BasketComparison';
 import { RecipeToList } from './components/RecipeToList';
@@ -10,44 +7,18 @@ import { SocialRecipes } from './components/SocialRecipes';
 import { PriceHistory } from './components/PriceHistory';
 import { Notifications } from './components/Notifications';
 import { Profile } from './components/Profile';
-import { EditProfile } from './components/EditProfile';
-import { GeneralSettings } from './components/GeneralSettings';
-import { PrivacySecurity } from './components/PrivacySecurity';
-import { HelpCenter } from './components/HelpCenter';
-import { ContactSupport } from './components/ContactSupport';
-import { FAQ } from './components/FAQ';
-import { TermsConditions } from './components/TermsConditions';
-import { PrivacyPolicy } from './components/PrivacyPolicy';
-import { HowPantryWorks } from './components/HowPantryWorks';
-import { Home as HomeIcon, ShoppingCart, Utensils, User } from 'lucide-react';
+import { StoreMap } from './components/StoreMap';
+import { Home as HomeIcon, ShoppingCart, Utensils, Bell, User } from 'lucide-react';
 
-type AppState = 'splash' | 'onboarding' | 'app';
-type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'edit-profile' | 'general-settings' | 'privacy-security' | 'help-center' | 'contact-support' | 'faq' | 'terms' | 'privacy-policy' | 'how-pantry-works';
+type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'map';
 
 export default function App() {
-  const [appState, setAppState] = useState<AppState>('splash');
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
 
-  const handleSplashFinish = () => {
-    setTimeout(() => setAppState('onboarding'), 600);
-  };
-
-  const handleGetStarted = () => {
-    setAppState('app');
-  };
-
-  if (appState === 'splash') {
-    return (
-      <>
-        <StartScreen onGetStarted={handleGetStarted} />
-        <SplashScreen onFinish={handleSplashFinish} />
-      </>
-    );
-  }
-
-  if (appState === 'onboarding') {
-    return <StartScreen onGetStarted={handleGetStarted} />;
-  }
+  // Set page title
+  useEffect(() => {
+    document.title = 'Pantry - Save more on every shop';
+  }, []);
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -67,36 +38,21 @@ export default function App() {
         return <Notifications onNavigate={setCurrentScreen} />;
       case 'profile':
         return <Profile onNavigate={setCurrentScreen} />;
-      case 'edit-profile':
-        return <EditProfile onNavigate={setCurrentScreen} />;
-      case 'general-settings':
-        return <GeneralSettings onNavigate={setCurrentScreen} />;
-      case 'privacy-security':
-        return <PrivacySecurity onNavigate={setCurrentScreen} />;
-      case 'help-center':
-        return <HelpCenter onNavigate={setCurrentScreen} />;
-      case 'contact-support':
-        return <ContactSupport onNavigate={setCurrentScreen} />;
-      case 'faq':
-        return <FAQ onNavigate={setCurrentScreen} />;
-      case 'terms':
-        return <TermsConditions onNavigate={setCurrentScreen} />;
-      case 'privacy-policy':
-        return <PrivacyPolicy onNavigate={setCurrentScreen} />;
-      case 'how-pantry-works':
-        return <HowPantryWorks onNavigate={setCurrentScreen} />;
+      case 'map':
+        return <StoreMap onNavigate={setCurrentScreen} />;
       default:
         return <Home onNavigate={setCurrentScreen} />;
     }
   };
 
   return (
-    <MobileLayout className="bg-white">
-      <div className="pb-20">
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile container */}
+      <div className="mx-auto max-w-md bg-white min-h-screen relative pb-20">
         {renderScreen()}
-      </div>
-      <div className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto pointer-events-none">
-        <div className="bg-white border-t border-gray-200 px-4 py-3 rounded-b-3xl pointer-events-auto">
+        
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 px-4 py-3">
           <div className="flex justify-around items-center">
             <button 
               onClick={() => setCurrentScreen('home')}
@@ -129,6 +85,6 @@ export default function App() {
           </div>
         </div>
       </div>
-    </MobileLayout>
+    </div>
   );
 }

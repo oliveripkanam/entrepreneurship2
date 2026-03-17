@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Search, TrendingUp, Filter, Heart, MessageCircle, Share2, Plus } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
-type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications';
+type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'map';
 
 interface SocialRecipesProps {
   onNavigate: (screen: Screen) => void;
@@ -195,6 +195,14 @@ export function SocialRecipes({ onNavigate }: SocialRecipesProps) {
                   <div>
                     <span className="text-gray-600">Serves</span>
                     <div className="text-gray-800">{recipe.serves}</div>
+                  </div>
+                </div>
+
+                {/* Price per serving */}
+                <div className="mb-4 bg-green-50 rounded-lg p-3">
+                  <div className="text-center">
+                    <span className="text-gray-600 text-sm">Price per serving: </span>
+                    <span className="text-[#4CAF50]">£{(recipe.totalCost / recipe.serves).toFixed(2)}</span>
                   </div>
                 </div>
 

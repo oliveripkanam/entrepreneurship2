@@ -1,6 +1,6 @@
-import { ChevronLeft, TrendingDown, Bell as BellIcon } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 
-type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications';
+type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'map';
 
 interface NotificationsProps {
   onNavigate: (screen: Screen) => void;
