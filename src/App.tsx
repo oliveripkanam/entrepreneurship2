@@ -10,6 +10,7 @@ import { SocialRecipes } from './components/SocialRecipes';
 import { PriceHistory } from './components/PriceHistory';
 import { Notifications } from './components/Notifications';
 import { Profile } from './components/Profile';
+import { StoreMap } from './components/StoreMap';
 import { EditProfile } from './components/EditProfile';
 import { GeneralSettings } from './components/GeneralSettings';
 import { PrivacySecurity } from './components/PrivacySecurity';
@@ -22,7 +23,7 @@ import { HowPantryWorks } from './components/HowPantryWorks';
 import { Home as HomeIcon, ShoppingCart, Utensils, User } from 'lucide-react';
 
 type AppState = 'splash' | 'onboarding' | 'app';
-type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'edit-profile' | 'general-settings' | 'privacy-security' | 'help-center' | 'contact-support' | 'faq' | 'terms' | 'privacy-policy' | 'how-pantry-works';
+type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'edit-profile' | 'general-settings' | 'privacy-security' | 'help-center' | 'contact-support' | 'faq' | 'terms' | 'privacy-policy' | 'how-pantry-works' | 'map';
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>('splash');
@@ -85,6 +86,8 @@ export default function App() {
         return <PrivacyPolicy onNavigate={setCurrentScreen} />;
       case 'how-pantry-works':
         return <HowPantryWorks onNavigate={setCurrentScreen} />;
+      case 'map':
+        return <StoreMap onNavigate={setCurrentScreen} />;
       default:
         return <Home onNavigate={setCurrentScreen} />;
     }

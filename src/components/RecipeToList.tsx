@@ -265,7 +265,7 @@ export function RecipeToList({ onNavigate }: RecipeToListProps) {
                         </div>
                         <div>
                           <h4 className="text-gray-800 font-medium">{store.name}</h4>
-                          <p className="text-gray-600 text-sm">{mockIngredients.length} items</p>
+                          <p className="text-gray-600 text-sm">{mockIngredients.length} items · £{(store.price / 4).toFixed(2)}/serving</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -304,9 +304,13 @@ export function RecipeToList({ onNavigate }: RecipeToListProps) {
                   <span className="text-white/90">Total Cost:</span>
                   <span className="text-2xl font-medium">£{cheapestStore.price.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center mb-2">
                   <span className="text-white/90">You Save:</span>
                   <span className="text-xl">£{(sortedStores[sortedStores.length - 1].price - cheapestStore.price).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-white/90">Per Serving (serves 4):</span>
+                  <span className="text-lg">£{(cheapestStore.price / 4).toFixed(2)}</span>
                 </div>
               </div>
               <button className="w-full bg-white text-[#4CAF50] py-3 rounded-lg font-medium mb-2">

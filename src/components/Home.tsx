@@ -1,12 +1,15 @@
-import { ShoppingCart, ChefHat, Users, TrendingDown, Leaf, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { ShoppingCart, ChefHat, Users, TrendingDown, Leaf, Settings, MapPin } from 'lucide-react';
 
-type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile';
+type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'edit-profile' | 'general-settings' | 'privacy-security' | 'help-center' | 'contact-support' | 'faq' | 'terms' | 'privacy-policy' | 'how-pantry-works' | 'map';
 
 interface HomeProps {
   onNavigate: (screen: Screen) => void;
 }
 
 export function Home({ onNavigate }: HomeProps) {
+  const [sustainabilityEnabled, setSustainabilityEnabled] = useState(true);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -108,7 +111,10 @@ export function Home({ onNavigate }: HomeProps) {
                 <h4 className="text-gray-800">Sustainability Ratings</h4>
                 <p className="text-gray-600">Eco-friendly product indicators</p>
               </div>
-              <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Active</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" checked={sustainabilityEnabled} onChange={(e) => setSustainabilityEnabled(e.target.checked)} />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#4CAF50]"></div>
+              </label>
             </div>
 
             {/* Loyalty Pricing */}
@@ -137,6 +143,21 @@ export function Home({ onNavigate }: HomeProps) {
               <div className="flex-1 text-left">
                 <h4 className="text-gray-800">Price Drop Notifications</h4>
                 <p className="text-gray-600">Get alerts when prices drop</p>
+              </div>
+              <span className="text-gray-400">›</span>
+            </button>
+
+            {/* Nearby Stores */}
+            <button 
+              onClick={() => onNavigate('map')}
+              className="w-full flex items-center gap-4 p-4 bg-white rounded-lg border border-gray-200 hover:border-[#4CAF50] transition-colors"
+            >
+              <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-5 h-5 text-teal-600" />
+              </div>
+              <div className="flex-1 text-left">
+                <h4 className="text-gray-800">Nearby Stores</h4>
+                <p className="text-gray-600">Find stores & get directions</p>
               </div>
               <span className="text-gray-400">›</span>
             </button>

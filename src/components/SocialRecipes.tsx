@@ -189,6 +189,10 @@ export function SocialRecipes({ onNavigate }: SocialRecipesProps) {
                     <div className="text-gray-800">£{recipe.totalCost.toFixed(2)}</div>
                   </div>
                   <div>
+                    <span className="text-[#4CAF50]">Per Serving</span>
+                    <div className="text-gray-800">£{(recipe.totalCost / recipe.serves).toFixed(2)}</div>
+                  </div>
+                  <div>
                     <span className="text-gray-600">Cheapest at</span>
                     <div className="text-gray-800">{recipe.cheapestStore}</div>
                   </div>

@@ -1,4 +1,5 @@
-import { ChevronLeft, Bell, Settings, HelpCircle, Shield, LogOut, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronLeft, Bell, Settings, HelpCircle, Shield, LogOut, ChevronRight, X, BookOpen } from 'lucide-react';
 
 type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'edit-profile' | 'general-settings' | 'privacy-security' | 'help-center' | 'contact-support' | 'faq' | 'terms' | 'privacy-policy' | 'how-pantry-works';
 
@@ -7,6 +8,7 @@ interface ProfileProps {
 }
 
 export function Profile({ onNavigate }: ProfileProps) {
+  const [showTutorial, setShowTutorial] = useState(false);
   const profileName = 'Smart Shopper';
   const profileEmail = 'smartshopper@email.com';
 
@@ -151,6 +153,16 @@ export function Profile({ onNavigate }: ProfileProps) {
               </div>
               <ChevronRight className="w-5 h-5 text-[#4CAF50]" />
             </button>
+            <button onClick={() => setShowTutorial(true)} className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div className="flex items-center gap-3">
+                <BookOpen className="w-5 h-5 text-gray-600" />
+                <div className="text-left">
+                  <span className="text-gray-800">Getting Started</span>
+                  <p className="text-gray-500 text-xs">Learn how to use Pantry</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-gray-400" />
+            </button>
             <button onClick={() => onNavigate('terms')} className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
               <span className="text-gray-800">Terms & Conditions</span>
               <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -170,6 +182,76 @@ export function Profile({ onNavigate }: ProfileProps) {
           <span>Log Out</span>
         </button>
       </div>
+
+      {/* Tutorial Modal */}
+      {showTutorial && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={() => setShowTutorial(false)}>
+          <div className="bg-white w-full rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-gray-800 text-xl">Getting Started with Pantry</h2>
+              <button onClick={() => setShowTutorial(false)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="bg-green-50 rounded-xl p-5 border border-green-200">
+                <p className="text-gray-700 text-sm">Welcome to Pantry! Here's a quick guide to help you save money on groceries and make smarter shopping decisions.</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0">📊</div>
+                  <div>
+                    <h3 className="text-gray-800 mb-1">1. Compare Prices Across Stores</h3>
+                    <p className="text-gray-600 text-sm">Find the best deals across Tesco, Sainsbury's, Lidl, Aldi, and Morrisons.</p>
+                  </div>
+                </div>
+                <div className="pl-13 space-y-1 text-sm text-gray-600">
+                  <p>→ Go to <strong>Basket</strong> tab</p>
+                  <p>→ Add items & compare prices instantly</p>
+                  <p>→ Toggle <strong>Loyalty Prices</strong> for extra savings</p>
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center shrink-0">🍝</div>
+                  <div>
+                    <h3 className="text-gray-800 mb-1">2. Convert Recipes to Shopping Lists</h3>
+                    <p className="text-gray-600 text-sm">Turn any recipe into an optimized shopping list.</p>
+                  </div>
+                </div>
+                <div className="pl-13 space-y-1 text-sm text-gray-600">
+                  <p>→ Paste a recipe URL, YouTube or Instagram link</p>
+                  <p>→ AI extracts ingredients automatically</p>
+                  <p>→ See cost comparison per store</p>
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">📍</div>
+                  <div>
+                    <h3 className="text-gray-800 mb-1">3. Find Nearby Stores</h3>
+                    <p className="text-gray-600 text-sm">Discover stores near you and get directions.</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center shrink-0">🔔</div>
+                  <div>
+                    <h3 className="text-gray-800 mb-1">4. Get Price Drop Alerts</h3>
+                    <p className="text-gray-600 text-sm">Set up notifications when items drop in price.</p>
+                  </div>
+                </div>
+              </div>
+              <div className="text-center pt-2 pb-2">
+                <button onClick={() => setShowTutorial(false)} className="bg-[#4CAF50] text-white px-8 py-3 rounded-xl font-medium">
+                  Start Shopping Smart! 🛒
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
