@@ -15,7 +15,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // Increase limit to 5MB
       },
-        manifest: {
+      manifest: {
         name: 'Pantry',
         short_name: 'Pantry',
         description: 'Pantry helps you save money on every grocery shop by comparing prices across UK supermarkets.',

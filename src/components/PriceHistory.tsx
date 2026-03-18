@@ -54,7 +54,7 @@ export function PriceHistory({ onNavigate }: PriceHistoryProps) {
         <div className="mb-6">
           <h2 className="text-gray-800 mb-2">Organic Whole Milk (2L) Price Trend</h2>
           <div className="flex items-center justify-between">
-            <p className="text-gray-600">(Last 12 Months)</p>
+            <p className="text-gray-600">{timeframe === 'monthly' ? '(Last 12 Months)' : '(Last 5 Years)'}</p>
             <span className="text-gray-400 text-xs">Updated: {PRICES_LAST_UPDATED}</span>
           </div>
         </div>

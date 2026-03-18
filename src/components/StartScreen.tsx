@@ -43,7 +43,7 @@ export function StartScreen({ onGetStarted }: StartScreenProps) {
             <button 
               onClick={onGetStarted}
               style={{
-                backgroundColor: '#4FA56F',
+                backgroundColor: '#4CAF50',
                 borderRadius: '20px',
                 padding: '20px',
                 fontSize: '18px',
@@ -55,10 +55,10 @@ export function StartScreen({ onGetStarted }: StartScreenProps) {
                 cursor: 'pointer',
                 transition: 'all 0.2s ease'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#458F5F'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#4FA56F'}
-              onMouseDown={(e) => e.currentTarget.style.backgroundColor = '#3D8A5A'}
-              onMouseUp={(e) => e.currentTarget.style.backgroundColor = '#4FA56F'}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#45a049'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
+              onMouseDown={(e) => e.currentTarget.style.backgroundColor = '#3d8b40'}
+              onMouseUp={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
             >
               Get Started
             </button>

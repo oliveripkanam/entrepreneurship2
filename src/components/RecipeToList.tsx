@@ -325,14 +325,14 @@ export function RecipeToList({ onNavigate }: RecipeToListProps) {
                 </div>
                 <div>
                   <h4 className="text-gray-800 mb-2">Sustainability Rating</h4>
-                  <p className="text-gray-700 mb-3">3 items in this recipe have high sustainability ratings. Consider these eco-friendly alternatives:</p>
+                  <p className="text-gray-700 mb-3">2 items in this recipe have high sustainability ratings. Consider these eco-friendly alternatives:</p>
                   <div className="space-y-2">
                     <div className="bg-white rounded-lg p-3 flex items-center justify-between">
                       <span className="text-gray-800">Organic Chicken Breast</span>
                       <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">♻️ Eco-Friendly</span>
                     </div>
                     <div className="bg-white rounded-lg p-3 flex items-center justify-between">
-                      <span className="text-gray-800">Free-Range Eggs</span>
+                      <span className="text-gray-800">Organic Greek Yogurt</span>
                       <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">♻️ Eco-Friendly</span>
                     </div>
                   </div>

@@ -107,7 +107,7 @@ export function BasketComparison({ onNavigate }: BasketComparisonProps) {
             onChange={(e) => setDistance(Number(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#4CAF50]"
           />
-          <p className="text-gray-600 mt-2">Showing stores within {distance} miles radius</p>
+          <p className="text-gray-600 mt-2">Showing stores within a {distance}-mile radius</p>
         </div>
 
         {/* Loyalty Toggle */}

@@ -31,7 +31,7 @@ const notifications = [
     id: 3,
     type: 'watched-item',
     product: 'Greek Yogurt (500g)',
-    store: 'Sainsburys',
+    store: "Sainsbury's",
     oldPrice: 2.50,
     newPrice: 2.00,
     savings: 0.50,
