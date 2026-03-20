@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, Bell, MapPin, Navigation, List, Map as MapIcon } from 'lucide-react';
+import supabase from '../lib/supabase';
 
 type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'edit-profile' | 'general-settings' | 'privacy-security' | 'help-center' | 'contact-support' | 'faq' | 'terms' | 'privacy-policy' | 'how-pantry-works' | 'map';
 
@@ -7,30 +8,52 @@ interface StoreMapProps {
   onNavigate: (screen: Screen) => void;
 }
 
-const storeInfo: Record<string, { domain: string }> = {
-  Tesco: { domain: 'tesco.com' },
-  "Sainsbury's": { domain: 'sainsburys.co.uk' },
-  Lidl: { domain: 'lidl.co.uk' },
-  Aldi: { domain: 'aldi.co.uk' },
-  Morrisons: { domain: 'morrisons.com' },
-};
-
-const nearbyStores = [
-  { id: 1, name: 'Tesco Express', chain: 'Tesco', distance: 0.3, address: '45 High Street, London SW1A 1AA', openUntil: '11:00 PM', hasLoyalty: true, loyaltyName: 'Clubcard' },
-  { id: 2, name: "Sainsbury's Local", chain: "Sainsbury's", distance: 0.5, address: '12 Victoria Road, London SW1A 2BB', openUntil: '10:00 PM', hasLoyalty: true, loyaltyName: 'Nectar' },
-  { id: 3, name: 'Lidl', chain: 'Lidl', distance: 0.7, address: '88 Oxford Street, London W1D 1BS', openUntil: '9:00 PM', hasLoyalty: false },
-  { id: 4, name: 'Aldi', chain: 'Aldi', distance: 0.9, address: '23 Baker Street, London NW1 6XE', openUntil: '10:00 PM', hasLoyalty: false },
-  { id: 5, name: 'Morrisons Daily', chain: 'Morrisons', distance: 1.2, address: '67 Regent Street, London W1B 4EA', openUntil: '11:00 PM', hasLoyalty: false },
-  { id: 6, name: 'Tesco Superstore', chain: 'Tesco', distance: 1.5, address: '156 Kensington High Street, London W8 7RG', openUntil: 'Midnight', hasLoyalty: true, loyaltyName: 'Clubcard' },
-];
-
 export function StoreMap({ onNavigate }: StoreMapProps) {
   const [view, setView] = useState<'map' | 'list'>('map');
-  const [selectedStore, setSelectedStore] = useState<number | null>(null);
+  const [selectedStore, setSelectedStore] = useState<string | null>(null);
+  const [storesData, setStoresData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const getLogoUrl = (chain: string) => {
-    if (chain === "Sainsbury's") return "https://cdn.brandfetch.io/id3jwaSrnD/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1685968241221";
-    const domain = storeInfo[chain]?.domain;
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const { data, error } = await supabase.from('stores').select('*');
+        if (data) {
+          const userLat = 51.5072;
+          const userLng = -0.1276;
+
+          const mapped = data.map((s) => {
+             const dist = s.lat && s.lng 
+                ? Math.sqrt(Math.pow((Number(s.lng) - userLng) * 43, 2) + Math.pow((Number(s.lat) - userLat) * 69, 2))
+                : 1.5;
+
+             return {
+               id: s.id,
+               name: s.name,
+               chain: s.name,
+               color: s.color,
+               emoji: s.emoji,
+               domain: s.domain,
+               distance: Math.round(dist * 10) / 10,
+               address: s.address || 'Location unknown',
+               openUntil: s.open_until || 'Standard hours',
+               hasLoyalty: s.has_loyalty || false,
+               loyaltyName: s.loyalty_name || '',
+             };
+          }).sort((a,b) => a.distance - b.distance);
+          setStoresData(mapped);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStores();
+  }, []);
+
+  const getLogoUrl = (domain: string) => {
+    if (domain === 'sainsburys.co.uk') return "https://cdn.brandfetch.io/id3jwaSrnD/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1685968241221";
     return domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : '';
   };
 
@@ -85,7 +108,7 @@ export function StoreMap({ onNavigate }: StoreMapProps) {
                 </div>
               </div>
               {/* Store Pins */}
-              {nearbyStores.slice(0, 4).map((store, index) => (
+              {storesData.slice(0, 4).map((store, index) => (
                 <button
                   key={store.id}
                   onClick={() => setSelectedStore(store.id)}
@@ -98,8 +121,8 @@ export function StoreMap({ onNavigate }: StoreMapProps) {
                 >
                   <div className={`transform transition-all ${selectedStore === store.id ? 'scale-125' : ''}`}>
                     <div className="relative">
-                      <div className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center overflow-hidden border-2 border-[#4CAF50]">
-                        <img src={getLogoUrl(store.chain)} alt={store.chain} className="w-7 h-7 object-contain" />
+                      <div className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center overflow-hidden border-2 border-[#4CAF50] text-xl">
+                        <img src={getLogoUrl(store.domain)} alt={store.chain} className="w-7 h-7 object-contain" onError={(e) => { e.currentTarget.style.display='none'; e.currentTarget.parentElement!.innerText=store.emoji; }} />
                       </div>
                       {selectedStore === store.id && (
                         <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-lg p-3 w-48 whitespace-nowrap">
@@ -120,18 +143,20 @@ export function StoreMap({ onNavigate }: StoreMapProps) {
             </div>
 
             {/* Quick Stats */}
-            <div className="bg-gradient-to-r from-[#4CAF50] to-[#45a049] rounded-xl shadow-md p-5 mb-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-white/80 text-sm mb-1">Closest Store</p>
-                  <h3 className="text-white">{nearbyStores[0].name}</h3>
-                </div>
-                <div className="text-right">
-                  <p className="text-white/80 text-sm mb-1">Distance</p>
-                  <p className="text-white text-2xl">{nearbyStores[0].distance}mi</p>
+            {storesData.length > 0 && (
+              <div className="bg-gradient-to-r from-[#4CAF50] to-[#45a049] rounded-xl shadow-md p-5 mb-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-white/80 text-sm mb-1">Closest Store</p>
+                    <h3 className="text-white">{storesData[0].name}</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-white/80 text-sm mb-1">Distance</p>
+                    <p className="text-white text-2xl">{storesData[0].distance}mi</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </>
         )}
 
@@ -139,19 +164,24 @@ export function StoreMap({ onNavigate }: StoreMapProps) {
         {view === 'list' && (
           <>
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-gray-500">{nearbyStores.length} stores nearby</p>
+              <p className="text-gray-500">{storesData.length} stores nearby</p>
               <button className="text-[#4CAF50] text-sm flex items-center gap-1">
                 <Navigation className="w-4 h-4" />
                 Sort by distance
               </button>
             </div>
-            <div className="space-y-3">
-              {nearbyStores.map((store) => (
-                <div key={store.id} className="bg-white rounded-xl shadow-sm p-5 border-2 border-transparent hover:border-[#4CAF50] transition-colors">
-                  <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center overflow-hidden border border-gray-100 shrink-0">
-                      <img src={getLogoUrl(store.chain)} alt={store.chain} className="w-10 h-10 object-contain" />
-                    </div>
+            {loading ? (
+              <div className="flex items-center justify-center py-10">
+                <div className="w-8 h-8 border-4 border-[#4CAF50] border-t-transparent flex items-center justify-center rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {storesData.map((store) => (
+                  <div key={store.id} className="bg-white rounded-xl shadow-sm p-5 border-2 border-transparent hover:border-[#4CAF50] transition-colors">
+                    <div className="flex items-start gap-4">
+                      <div className="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center overflow-hidden border border-gray-100 shrink-0 text-2xl">
+                        <img src={getLogoUrl(store.domain)} alt={store.chain} className="w-10 h-10 object-contain" onError={(e) => { e.currentTarget.style.display='none'; e.currentTarget.parentElement!.innerText=store.emoji; }} />
+                      </div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-2">
                         <div>
@@ -177,6 +207,7 @@ export function StoreMap({ onNavigate }: StoreMapProps) {
                 </div>
               ))}
             </div>
+            )}
           </>
         )}
 

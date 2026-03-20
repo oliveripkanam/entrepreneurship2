@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, Camera } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import supabase from '../lib/supabase';
 
 type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'edit-profile' | 'general-settings' | 'privacy-security' | 'help-center' | 'contact-support' | 'faq' | 'terms' | 'privacy-policy' | 'how-pantry-works';
 
@@ -8,17 +10,36 @@ interface Props {
 }
 
 export function EditProfile({ onNavigate }: Props) {
-  const [name, setName] = useState('Smart Shopper');
-  const [email, setEmail] = useState('smartshopper@email.com');
+  const { profile, user, refreshProfile } = useAuth();
+  const [name, setName] = useState(profile?.display_name || 'Smart Shopper');
+  const [email, setEmail] = useState(user?.email || '');
   const [emailError, setEmailError] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const handleSave = () => {
+  useEffect(() => {
+    if (profile) setName(profile.display_name);
+    if (user) setEmail(user.email || '');
+  }, [profile, user]);
+
+  const handleSave = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (email && !emailRegex.test(email)) {
       setEmailError('Please enter a valid email address');
       return;
     }
-    onNavigate('profile');
+    
+    setSaving(true);
+    try {
+      if (profile && profile.display_name !== name) {
+        await supabase.from('profiles').update({ display_name: name }).eq('id', profile.id);
+        await refreshProfile();
+      }
+      onNavigate('profile');
+    } catch (error) {
+      console.error('Error saving profile', error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -77,10 +98,10 @@ export function EditProfile({ onNavigate }: Props) {
         <div style={{ marginTop: '24px', paddingBottom: '16px' }}>
           <button
             onClick={handleSave}
-            disabled={!name.trim()}
+            disabled={!name.trim() || saving}
             className="w-full py-4 bg-[#4CAF50] text-white rounded-xl font-medium text-base disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Save Changes
+            {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>

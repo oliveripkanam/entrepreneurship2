@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, Bell, Settings, HelpCircle, Shield, LogOut, ChevronRight, X, BookOpen } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import supabase from '../lib/supabase';
 
 type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'edit-profile' | 'general-settings' | 'privacy-security' | 'help-center' | 'contact-support' | 'faq' | 'terms' | 'privacy-policy' | 'how-pantry-works';
 
@@ -8,9 +10,14 @@ interface ProfileProps {
 }
 
 export function Profile({ onNavigate }: ProfileProps) {
+  const { profile, user } = useAuth();
   const [showTutorial, setShowTutorial] = useState(false);
-  const profileName = 'Smart Shopper';
-  const profileEmail = 'smartshopper@email.com';
+  const profileName = profile?.display_name || 'Smart Shopper';
+  const profileEmail = user?.email || '';
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -177,7 +184,7 @@ export function Profile({ onNavigate }: ProfileProps) {
           </div>
         </div>
 
-        <button className="w-full flex items-center justify-center gap-3 p-4 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+        <button onClick={handleLogout} className="w-full flex items-center justify-center gap-3 p-4 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
           <LogOut className="w-5 h-5" />
           <span>Log Out</span>
         </button>

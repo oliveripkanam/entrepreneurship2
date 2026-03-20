@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
 
 type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications';
 
 interface DietaryFiltersProps {
   onNavigate: (screen: Screen) => void;
+  activeFilters?: string[];
+  onFiltersChange?: (filters: string[]) => void;
 }
 
 const dietaryOptions = [
@@ -15,17 +17,19 @@ const dietaryOptions = [
   { id: 'dairy-free', label: 'Dairy-Free' },
   { id: 'nut-free', label: 'Nut-Free' },
   { id: 'organic', label: 'Organic' },
-  { id: 'low-carb', label: 'Low Carb' }
+  { id: 'low-carb', label: 'Low Carb' },
 ];
 
-export function DietaryFilters({ onNavigate }: DietaryFiltersProps) {
-  const [selected, setSelected] = useState<string[]>([]);
+export function DietaryFilters({ onNavigate, activeFilters = [], onFiltersChange }: DietaryFiltersProps) {
+  const [selected, setSelected] = useState<string[]>(activeFilters);
+
+  useEffect(() => {
+    setSelected(activeFilters);
+  }, []);
 
   const toggleFilter = (id: string) => {
-    setSelected(prev => 
-      prev.includes(id) 
-        ? prev.filter(item => item !== id)
-        : [...prev, id]
+    setSelected(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     );
   };
 
@@ -34,14 +38,15 @@ export function DietaryFilters({ onNavigate }: DietaryFiltersProps) {
   };
 
   const applyFilters = () => {
-    onNavigate('home');
+    if (onFiltersChange) onFiltersChange(selected);
+    onNavigate('social');
   };
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="flex justify-between items-center p-6 border-b border-gray-200">
-        <button onClick={() => onNavigate('home')}>
+        <button onClick={() => onNavigate('social')}>
           <ChevronLeft className="w-6 h-6 text-gray-600" />
         </button>
         <h1 className="text-gray-800">Dietary Filters</h1>
@@ -51,21 +56,21 @@ export function DietaryFilters({ onNavigate }: DietaryFiltersProps) {
       <div className="p-6">
         {/* Description */}
         <div className="mb-6">
-          <h3 className="text-gray-800 mb-2">Select Your Preferences</h3>
+          <h3 className="text-gray-800 mb-2">Filter Recipes</h3>
           <p className="text-gray-600">
-            Customize your search results by selecting specific dietary requirements.
+            Only show recipes that match your dietary requirements.
           </p>
         </div>
 
         {/* Filter Options */}
         <div className="space-y-3 mb-8">
           {dietaryOptions.map((option) => (
-            <label 
+            <label
               key={option.id}
               className="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
             >
               <span className="text-gray-800">{option.label}</span>
-              <input 
+              <input
                 type="checkbox"
                 checked={selected.includes(option.id)}
                 onChange={() => toggleFilter(option.id)}
@@ -77,13 +82,13 @@ export function DietaryFilters({ onNavigate }: DietaryFiltersProps) {
 
         {/* Actions */}
         <div className="flex gap-3">
-          <button 
+          <button
             onClick={resetFilters}
             className="flex-1 border border-gray-300 text-gray-800 py-3 rounded-lg"
           >
             Reset Filters
           </button>
-          <button 
+          <button
             onClick={applyFilters}
             className="flex-1 bg-[#4CAF50] text-white py-3 rounded-lg"
           >

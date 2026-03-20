@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, Bell } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { PRICES_LAST_UPDATED } from '../lib/priceData';
+import supabase from '../lib/supabase';
 
 type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications';
 
@@ -9,32 +9,42 @@ interface PriceHistoryProps {
   onNavigate: (screen: Screen) => void;
 }
 
-const monthlyData = [
-  { month: 'Mar 23', price: 2.20, avgPrice: 2.25 },
-  { month: 'Apr 23', price: 2.25, avgPrice: 2.28 },
-  { month: 'May 23', price: 2.30, avgPrice: 2.30 },
-  { month: 'Jun 23', price: 2.50, avgPrice: 2.45 },
-  { month: 'Jul 23', price: 2.60, avgPrice: 2.52 },
-  { month: 'Aug 23', price: 2.55, avgPrice: 2.50 },
-  { month: 'Sep 23', price: 2.65, avgPrice: 2.55 },
-  { month: 'Oct 23', price: 2.70, avgPrice: 2.58 },
-  { month: 'Nov 23', price: 2.75, avgPrice: 2.62 },
-  { month: 'Dec 23', price: 2.65, avgPrice: 2.60 },
-  { month: 'Jan 24', price: 2.50, avgPrice: 2.55 },
-  { month: 'Feb 24', price: 2.45, avgPrice: 2.48 }
-];
-
-const yearlyData = [
-  { year: '2020', price: 1.80, avgPrice: 1.85 },
-  { year: '2021', price: 1.95, avgPrice: 2.00 },
-  { year: '2022', price: 2.20, avgPrice: 2.25 },
-  { year: '2023', price: 2.55, avgPrice: 2.50 },
-  { year: '2024', price: 2.45, avgPrice: 2.48 }
-];
-
 export function PriceHistory({ onNavigate }: PriceHistoryProps) {
   const [timeframe, setTimeframe] = useState<'monthly' | 'yearly'>('monthly');
+  const [loading, setLoading] = useState(true);
+  const [monthlyData, setMonthlyData] = useState<any[]>([]);
+  const [yearlyData, setYearlyData] = useState<any[]>([]);
+  const [productName, setProductName] = useState('Organic Whole Milk (2L)');
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      setLoading(true);
+      try {
+        const { data: firstItem } = await supabase.from('price_history').select('product_id').limit(1).maybeSingle();
+        if (firstItem) {
+          const pid = firstItem.product_id;
+          const [mRes, yRes, pRes] = await Promise.all([
+            supabase.from('price_history_monthly').select('*').eq('product_id', pid).order('recorded_at'),
+            supabase.from('price_history_yearly').select('*').eq('product_id', pid).order('year'),
+            supabase.from('products').select('name').eq('id', pid).single()
+          ]);
+          if (mRes.data) setMonthlyData(mRes.data);
+          if (yRes.data) setYearlyData(yRes.data);
+          if (pRes.data) setProductName(pRes.data.name);
+        }
+      } catch (err) {
+        console.error('Error fetching price history:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHistory();
+  }, []);
+
   const data = timeframe === 'monthly' ? monthlyData : yearlyData;
+  const lastUpdated = monthlyData.length > 0 
+    ? new Date(monthlyData[monthlyData.length - 1].recorded_at).toLocaleDateString() 
+    : 'Today';
 
   return (
     <div className="min-h-screen bg-white">
@@ -50,14 +60,25 @@ export function PriceHistory({ onNavigate }: PriceHistoryProps) {
       </div>
 
       <div className="p-6">
-        {/* Product Info */}
-        <div className="mb-6">
-          <h2 className="text-gray-800 mb-2">Organic Whole Milk (2L) Price Trend</h2>
-          <div className="flex items-center justify-between">
-            <p className="text-gray-600">{timeframe === 'monthly' ? '(Last 12 Months)' : '(Last 5 Years)'}</p>
-            <span className="text-gray-400 text-xs">Updated: {PRICES_LAST_UPDATED}</span>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center p-12 text-center h-64">
+            <div className="w-10 h-10 border-4 border-[#4CAF50] border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-500">Loading price trends...</p>
           </div>
-        </div>
+        ) : data.length === 0 ? (
+          <div className="bg-white rounded-xl p-8 text-center text-gray-500 border border-gray-100 mt-8">
+            <p>No price history data available yet.</p>
+          </div>
+        ) : (
+          <>
+            {/* Product Info */}
+            <div className="mb-6">
+              <h2 className="text-gray-800 mb-2">{productName} Price Trend</h2>
+              <div className="flex items-center justify-between">
+                <p className="text-gray-600">{timeframe === 'monthly' ? '(Last 12 Months)' : '(Last 5 Years)'}</p>
+                <span className="text-gray-400 text-xs">Updated: {lastUpdated}</span>
+              </div>
+            </div>
 
         {/* Timeframe Toggle */}
         <div className="flex gap-2 mb-6">
@@ -162,6 +183,8 @@ export function PriceHistory({ onNavigate }: PriceHistoryProps) {
         <button className="w-full bg-[#4CAF50] text-white py-3 rounded-lg mt-6">
           Watch This Item for Price Drops
         </button>
+          </>
+        )}
       </div>
     </div>
   );

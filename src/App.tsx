@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SplashScreen } from './components/SplashScreen';
 import { StartScreen } from './components/StartScreen';
 import { MobileLayout } from './components/MobileLayout';
@@ -21,33 +21,41 @@ import { TermsConditions } from './components/TermsConditions';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { HowPantryWorks } from './components/HowPantryWorks';
 import { Home as HomeIcon, ShoppingCart, Utensils, User } from 'lucide-react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 type AppState = 'splash' | 'onboarding' | 'app';
 type Screen = 'home' | 'basket' | 'recipe' | 'dietary' | 'social' | 'price-history' | 'notifications' | 'profile' | 'edit-profile' | 'general-settings' | 'privacy-security' | 'help-center' | 'contact-support' | 'faq' | 'terms' | 'privacy-policy' | 'how-pantry-works' | 'map';
 
-export default function App() {
+function MainApp() {
+  const { session, isLoading } = useAuth();
   const [appState, setAppState] = useState<AppState>('splash');
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
+  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
+  const [activeDietaryFilters, setActiveDietaryFilters] = useState<string[]>([]);
 
   const handleSplashFinish = () => {
-    setTimeout(() => setAppState('onboarding'), 600);
+    setTimeout(() => {
+      setAppState(session ? 'app' : 'onboarding');
+    }, 600);
   };
 
-  const handleGetStarted = () => {
-    setAppState('app');
-  };
+  useEffect(() => {
+    if (!isLoading && appState !== 'splash') {
+      setAppState(session ? 'app' : 'onboarding');
+    }
+  }, [session, isLoading, appState]);
 
   if (appState === 'splash') {
     return (
       <>
-        <StartScreen onGetStarted={handleGetStarted} />
+        {session ? null : <StartScreen onGetStarted={() => {}} />}
         <SplashScreen onFinish={handleSplashFinish} />
       </>
     );
   }
 
   if (appState === 'onboarding') {
-    return <StartScreen onGetStarted={handleGetStarted} />;
+    return <StartScreen onGetStarted={() => {}} />;
   }
 
   const renderScreen = () => {
@@ -57,11 +65,11 @@ export default function App() {
       case 'basket':
         return <BasketComparison onNavigate={setCurrentScreen} />;
       case 'recipe':
-        return <RecipeToList onNavigate={setCurrentScreen} />;
+        return <RecipeToList onNavigate={setCurrentScreen} recipeId={selectedRecipeId} onResetRecipe={() => setSelectedRecipeId(null)} />;
       case 'dietary':
-        return <DietaryFilters onNavigate={setCurrentScreen} />;
+        return <DietaryFilters onNavigate={setCurrentScreen} activeFilters={activeDietaryFilters} onFiltersChange={setActiveDietaryFilters} />;
       case 'social':
-        return <SocialRecipes onNavigate={setCurrentScreen} />;
+        return <SocialRecipes onNavigate={setCurrentScreen} activeDietaryFilters={activeDietaryFilters} onSelectRecipe={(id) => { setSelectedRecipeId(id); setCurrentScreen('recipe'); }} />;
       case 'price-history':
         return <PriceHistory onNavigate={setCurrentScreen} />;
       case 'notifications':
@@ -102,28 +110,28 @@ export default function App() {
         <div className="bg-white border-t border-gray-200 px-4 py-3 rounded-b-3xl pointer-events-auto">
           <div className="flex justify-around items-center">
             <button 
-              onClick={() => setCurrentScreen('home')}
+              onClick={() => { setCurrentScreen('home'); setSelectedRecipeId(null); }}
               className="flex flex-col items-center gap-1"
             >
               <HomeIcon className={`w-6 h-6 ${currentScreen === 'home' ? 'text-[#4CAF50]' : 'text-gray-400'}`} />
               <span className={`text-xs ${currentScreen === 'home' ? 'text-[#4CAF50]' : 'text-gray-400'}`}>Home</span>
             </button>
             <button 
-              onClick={() => setCurrentScreen('basket')}
+              onClick={() => { setCurrentScreen('basket'); setSelectedRecipeId(null); }}
               className="flex flex-col items-center gap-1"
             >
               <ShoppingCart className={`w-6 h-6 ${currentScreen === 'basket' ? 'text-[#4CAF50]' : 'text-gray-400'}`} />
               <span className={`text-xs ${currentScreen === 'basket' ? 'text-[#4CAF50]' : 'text-gray-400'}`}>Basket</span>
             </button>
             <button 
-              onClick={() => setCurrentScreen('social')}
+              onClick={() => { setCurrentScreen('social'); setSelectedRecipeId(null); }}
               className="flex flex-col items-center gap-1"
             >
               <Utensils className={`w-6 h-6 ${currentScreen === 'social' ? 'text-[#4CAF50]' : 'text-gray-400'}`} />
               <span className={`text-xs ${currentScreen === 'social' ? 'text-[#4CAF50]' : 'text-gray-400'}`}>Recipes</span>
             </button>
             <button 
-              onClick={() => setCurrentScreen('profile')}
+              onClick={() => { setCurrentScreen('profile'); setSelectedRecipeId(null); }}
               className="flex flex-col items-center gap-1"
             >
               <User className={`w-6 h-6 ${currentScreen === 'profile' ? 'text-[#4CAF50]' : 'text-gray-400'}`} />
@@ -133,5 +141,13 @@ export default function App() {
         </div>
       </div>
     </MobileLayout>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <MainApp />
+    </AuthProvider>
   );
 }
